@@ -216,10 +216,7 @@
                     <label for="date-input">Date</label>
                     <input type="date" id="date-input" required>
                 </div>
-                <div class="form-group conditional-fields" id="time-field">
-                    <label for="time-input">Time</label>
-                    <input type="time" id="time-input">
-                </div>
+                
             </div>
 
             <div class="form-row">
@@ -316,10 +313,10 @@
                     id: 'live',
                     name: 'LIVE CLASS',
                     url: 'templates/live.png',
-                    fields: ['course', 'subject', 'chapter', 'date', 'time'],
+                    fields: ['course', 'subject', 'chapter', 'date'],
                     coordinates: {
                         courseBatch: { x: 260, y: 287, align: 'center', fontSize: 40, color: '#FBC40F' },
-                        datetime: { x: 600, y: 325, align: 'center', fontSize: 30, color: '#FFFFFF' },
+                        date: { x: 600, y: 325, align: 'center', fontSize: 30, color: '#FFFFFF' },
                         subject: { x: 260, y: 365, align: 'center', fontSize: 40, color: '#FBC40F' },
                         chapter: { x: 400, y: 472, align: 'center', maxWidth: 640, maxHeight: 100, fontSize: 50, color: '#FBC40F' }
                     }
@@ -431,10 +428,7 @@
                 document.getElementById('subject-group').style.display = 'block';
                 document.getElementById('chapter-group').style.display = 'block';
 
-                if (selectedTemplate.fields.includes('time')) {
-                    document.getElementById('time-field').classList.add('show');
-                    document.getElementById('time-input').required = true;
-                }
+                
 
                 if (selectedTemplate.fields.includes('topic')) {
                     document.getElementById('topic-field').classList.add('show');
@@ -579,13 +573,7 @@
                 drawTextWithOutline(ctx, line.trim(), x, currentY, color);
             }
 
-            function convertTo12Hour(time24) {
-                const [hours, minutes] = time24.split(':');
-                const hour = parseInt(hours, 10);
-                const ampm = hour >= 12 ? 'PM' : 'AM';
-                const hour12 = hour % 12 || 12;
-                return `${hour12} : ${minutes}  ${ampm}`;
-            }
+            
 
             function generateScheduleImage() {
                 const canvas = document.getElementById('schedule-preview');
@@ -601,7 +589,7 @@
                 const topicText = document.getElementById('topic-input').value.toUpperCase();
 
                 const dateInput = document.getElementById('date-input').value;
-                const timeInput = document.getElementById('time-input').value;
+                
                 const dateObj = new Date(dateInput);
                 
                 const monthNames = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUNE', 
@@ -633,21 +621,7 @@
                 ctx.textAlign = coords.courseBatch.align;
                 drawTextWithOutline(ctx, courseBatchText, coords.courseBatch.x, coords.courseBatch.y, coords.courseBatch.color);
 
-                if (selectedTemplate.id === 'live' && timeInput) {
-                    const time12Hour = convertTo12Hour(timeInput);
-                    const dateTimeLines = [`${month}  ${day}`, `${year}`, `${time12Hour}`, 'IST'];
-                    
-                    ctx.font = `bold ${coords.datetime.fontSize}px Arial`;
-                    ctx.textAlign = coords.datetime.align;
-                    
-                    const lineHeight = coords.datetime.fontSize * 1.1;
-                    const totalHeight = (dateTimeLines.length - 1) * lineHeight;
-                    const startY = coords.datetime.y - (totalHeight / 2);
-                    
-                    dateTimeLines.forEach((line, index) => {
-                        drawTextWithOutline(ctx, line, coords.datetime.x, startY + (index * lineHeight), coords.datetime.color);
-                    });
-                } else if (coords.date) {
+                if (coords.date) {
                     ctx.font = `bold ${coords.date.fontSize}px Arial`;
                     ctx.textAlign = coords.date.align;
                     drawTextWithOutline(ctx, formattedDate, coords.date.x, coords.date.y, coords.date.color);
